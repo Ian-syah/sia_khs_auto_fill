@@ -1,4 +1,3 @@
-import os
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -71,28 +70,21 @@ class MainWindow(Gtk.Window):
         sign_button.click()
 
         print("\nBerhasil Login!!!")
-        # hamburger = driver.find_elements_by_xpath("/html/body/div/div[4]/nav/div[2]/div[1]")[0]
-        # log_out = driver.find_element_by_xpath("/html/body/div/div[3]/div/div/div/ul/li[8]/a")
-
 
         self._after_login(driver)
 
     def _after_login(self, driver):
         hasil_studi = driver.find_element_by_xpath("/html/body/div/div[3]/div/div/div/ul/li[4]")
-        khs = driver.find_element_by_xpath("/html/body/div/div[3]/div/div/div/ul/li[4]/ul/li")
+        khs         = driver.find_element_by_xpath("/html/body/div/div[3]/div/div/div/ul/li[4]/ul/li")
         action = ActionChains(driver)
 
         action.move_to_element(hasil_studi).click(hasil_studi).perform()
         action.move_to_element(khs).click(khs).perform()
 
+    # def _khs_pages(self, driver):
+    #     pass
 
 
-        
-
-        
-
-
-# main
 win = MainWindow()
 win.connect("destroy", Gtk.main_quit)
 win.show_all()
