@@ -4,7 +4,8 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 # pip install selenium
 from selenium import webdriver
-from getpass import getpass
+from selenium.webdriver.common.action_chains import ActionChains
+
 
 class MainWindow(Gtk.Window):
     def __init__(self):
@@ -18,6 +19,8 @@ class MainWindow(Gtk.Window):
         self.set_size_request(640, 360)
         self.label = Gtk.Label("Aplikasi GTK dengan Python")
         self.add(self.label)
+
+    
 
     def _entry(self):
         # Set The Box
@@ -44,10 +47,14 @@ class MainWindow(Gtk.Window):
 
         vbox.pack_start(self.button, False, True, 1)
 
-    def _sign_in(self, widget):
-        driver = webdriver.Chrome("web_driver/chromedriver")
 
-        driver.get("https://sia.unmul.ac.id/login")
+
+    def _sign_in(self, widget):
+
+        driver = webdriver.Chrome()
+
+        driver.maximize_window()
+        driver.get("https://sia.unmul.ac.id/home")
 
         username_form = driver.find_element_by_id("exampleInputEmail")
         username_form.send_keys(self.username.get_text())
@@ -62,6 +69,27 @@ class MainWindow(Gtk.Window):
 
         sign_button = driver.find_elements_by_xpath("/html/body/div/div/div/div/div/form/div[5]/button")[0]
         sign_button.click()
+
+        print("\nBerhasil Login!!!")
+        # hamburger = driver.find_elements_by_xpath("/html/body/div/div[4]/nav/div[2]/div[1]")[0]
+        # log_out = driver.find_element_by_xpath("/html/body/div/div[3]/div/div/div/ul/li[8]/a")
+
+
+        self._after_login(driver)
+
+    def _after_login(self, driver):
+        hasil_studi = driver.find_element_by_xpath("/html/body/div/div[3]/div/div/div/ul/li[4]")
+        khs = driver.find_element_by_xpath("/html/body/div/div[3]/div/div/div/ul/li[4]/ul/li")
+        action = ActionChains(driver)
+
+        action.move_to_element(hasil_studi).click(hasil_studi).perform()
+        action.move_to_element(khs).click(khs).perform()
+
+
+
+        
+
+        
 
 
 # main
