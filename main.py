@@ -45,11 +45,23 @@ class MainWindow(Gtk.Window):
         vbox.pack_start(self.button, False, True, 1)
 
     def _sign_in(self, widget):
-        print(self.username.get_text())
-        print(self.password.get_text())
+        driver = webdriver.Chrome("web_driver/chromedriver")
 
+        driver.get("https://sia.unmul.ac.id/login")
 
+        username_form = driver.find_element_by_id("exampleInputEmail")
+        username_form.send_keys(self.username.get_text())
 
+        password_form = driver.find_element_by_id("exampleInputPassword")
+        password_form.send_keys(self.password.get_text())
+
+        code_text = driver.find_element_by_css_selector("div.form-group:nth-child(3) > div:nth-child(1)").text
+
+        security_code_form = driver.find_element_by_css_selector("div.form-group:nth-child(4) > input:nth-child(1)")
+        security_code_form.send_keys(code_text)
+
+        sign_button = driver.find_elements_by_xpath("/html/body/div/div/div/div/div/form/div[5]/button")[0]
+        sign_button.click()
 
 
 # main
@@ -57,9 +69,4 @@ win = MainWindow()
 win.connect("destroy", Gtk.main_quit)
 win.show_all()
 Gtk.main()
-# username = input("Masukkan Username: ")
-# password = input("Masukkan Password: ")
 
-# driver = webdriver.Chrome("web_driver/chromedriver")
-
-# driver.get("https://sia.unmul.ac.id/login")
