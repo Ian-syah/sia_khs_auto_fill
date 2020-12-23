@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
+import time
 
 
 class MainWindow(Gtk.Window):
@@ -126,34 +127,38 @@ class MainWindow(Gtk.Window):
 
         run = True
         
+        while (True):
+            self.action = ActionChains(self.driver)
+
+            pilih_bar = self.driver.execute_script(open("./js/khs_page.js").read())
             
-        self.action = ActionChains(self.driver)
-
-        pilih_bar = self.driver.execute_script(open("./js/khs_page.js").read())
+            try:
+                last = self.driver.find_element_by_partial_link_text("Kuisioner")
+                print(last.text)
         
-        try:
-            last = self.driver.find_element_by_partial_link_text("Kuisioner")
-            print(last.text)
-    
-            self.action.move_to_element(last).click(last).perform()
+                self.action.move_to_element(last).click(last).perform()
 
-            # Masuk Ke Kuisoner
-            self._kuisioner()
+                # Reload Page
+                self.driver.refresh()
 
-            # Menutup Window Baru
-            # self.driver.execute_script("window.close();")
+                # Masuk Ke Kuisoner
+                self._kuisioner()
 
-            # Reload Page
-            # self.driver.execute_script("location.reload();")
+                # Menutup Window Baru
+                self.driver.execute_script("window.close();")
 
-            # Handling Current Tab with webdriver
-            self._changeTab()
-        except NoSuchElementException as exception:
-            print("Tidak ada lagi kuisioner, menutup browser")
-            run = False
-            self.driver.quit()
 
-        
+                # Handling Current Tab with webdriver
+                self._changeTab()
+
+                # Slepp for debug
+                # time.sleep(30)
+
+            except NoSuchElementException as exception:
+                print("Tidak ada lagi kuisioner, menutup browser")
+                run = False
+                self.driver.quit()
+            
     def _changeTab(self):
         allTabs = self.driver.window_handles
 
@@ -167,11 +172,22 @@ class MainWindow(Gtk.Window):
         self._changeTab()
         
         self._kuisionerTab("1", 1, 16) # Kesiapan Mengajar
-        self._kuisionerTab("2",17, 23) 
-        self._kuisionerTab("3",24, 27)
+        self._kuisionerTab("2", 17, 23) 
+        self._kuisionerTab("3", 24, 27)
         self._kuisionerTab("4", 28, 32)
         self._kuisionerTab("5", 33, 35)
 
+        # Tab Saran
+        link = "a[href='#tabs8']"
+        elem = "document.querySelector(\""+link+"\").click();"
+        self.driver.execute_script(elem)
+
+        elemText = "document.querySelector('textarea').value = ' ';"
+        self.driver.execute_script(elemText)
+
+        # Submit Kuisioner
+        elemSubmit = "document.querySelector('#submit').click();"
+        self.driver.execute_script(elemSubmit)
 
     def _kuisionerTab(self, tabNum, start, pertanyaan):
         link = "a[href='#tabs"+tabNum+"']"
@@ -186,8 +202,6 @@ class MainWindow(Gtk.Window):
             value = random.choice(self.array)
             elem = "document.querySelector(\"tr input[name='"+name+"'][value='"+value+"']\").checked = true;"
             self.driver.execute_script(elem)
-
-        print("Selesai")
 
         
 
