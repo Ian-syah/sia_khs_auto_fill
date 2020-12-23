@@ -5,9 +5,7 @@ from gi.repository import Gtk
 # pip install selenium
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 
 
@@ -29,19 +27,25 @@ class MainWindow(Gtk.Window):
 
         self.add(self.vbox) # Add The Box to MainWindow
 
+        self.title = Gtk.Label(label="Lazy to Fill Questionnaire")
+        self.vbox.pack_start(self.title, False, False, 2)
+
         # Set Username Input
         self.username = Gtk.Entry()
+        # self.username.
         self.username.set_text("")
+        self.username.set_placeholder_text("Username")
         self.vbox.pack_start(self.username, False, False, 2)
 
         # Make Password Input
         self.password = Gtk.Entry()
         self.password.set_text("")
+        self.password.set_placeholder_text("Password")
         self.password.set_visibility(False)
         self.vbox.pack_start(self.password, False, False, 2)
 
         # Label
-        self.rangeLabel = Gtk.Label("Range Penilaian. Kalian bisa memilih lebih dari satu dan akan menjadi jawaban dari penilaian di kuisioner")
+        self.rangeLabel = Gtk.Label(label="Range Penilaian. Kalian bisa memilih lebih dari satu dan akan menjadi jawaban dari penilaian di kueisioner")
         self.vbox.pack_start(self.rangeLabel, False, False, 2)
 
         # Make CheckBox
@@ -86,7 +90,7 @@ class MainWindow(Gtk.Window):
 
         self.driver.maximize_window()
         self.driver.get("https://sia.unmul.ac.id/home")
-        self.driver.implicitly_wait(60)
+        self.driver.implicitly_wait(30)
 
         username_form = self.driver.find_element_by_id("exampleInputEmail")
         username_form.send_keys(self.username.get_text())
@@ -119,29 +123,72 @@ class MainWindow(Gtk.Window):
 
 
     def _khs_pages(self):
+
+        run = True
+        
+            
         self.action = ActionChains(self.driver)
 
         pilih_bar = self.driver.execute_script(open("./js/khs_page.js").read())
-
-        last = self.driver.find_element_by_partial_link_text("Kuisioner")
-
-        print(last.text)
- 
-        self.action.move_to_element(last).click(last).perform()
-
-        self._kuisioner()
         
-    def _kuisioner(self):
-        self.action = ActionChains(self.driver)
+        try:
+            last = self.driver.find_element_by_partial_link_text("Kuisioner")
+            print(last.text)
+    
+            self.action.move_to_element(last).click(last).perform()
 
+            # Masuk Ke Kuisoner
+            self._kuisioner()
+
+            # Menutup Window Baru
+            # self.driver.execute_script("window.close();")
+
+            # Reload Page
+            # self.driver.execute_script("location.reload();")
+
+            # Handling Current Tab with webdriver
+            self._changeTab()
+        except NoSuchElementException as exception:
+            print("Tidak ada lagi kuisioner, menutup browser")
+            run = False
+            self.driver.quit()
+
+        
+    def _changeTab(self):
         allTabs = self.driver.window_handles
 
         for tab in allTabs:
             self.driver.switch_to.window(tab)
             print(self.driver.current_url)
 
-        kesiapan_mengajar = self.driver.find_element_by_partial_link_text("Kesiapan Mengajar")
-        kesiapan_mengajar.click()
+    
+    def _kuisioner(self):
+
+        self._changeTab()
+        
+        self._kuisionerTab("1", 1, 16) # Kesiapan Mengajar
+        self._kuisionerTab("2",17, 23) 
+        self._kuisionerTab("3",24, 27)
+        self._kuisionerTab("4", 28, 32)
+        self._kuisionerTab("5", 33, 35)
+
+
+    def _kuisionerTab(self, tabNum, start, pertanyaan):
+        link = "a[href='#tabs"+tabNum+"']"
+        elem = "document.querySelector(\""+link+"\").click();"
+        self.driver.execute_script(elem)
+        self._checkingTheBox(start, pertanyaan + 1)
+
+
+    def _checkingTheBox(self, start, qLen):
+        for i in range(start, qLen):
+            name = "jawab["+str(i)+"]"
+            value = random.choice(self.array)
+            elem = "document.querySelector(\"tr input[name='"+name+"'][value='"+value+"']\").checked = true;"
+            self.driver.execute_script(elem)
+
+        print("Selesai")
+
         
 
 win = MainWindow()
