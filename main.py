@@ -1,4 +1,5 @@
 import gi
+import random
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 # pip install selenium
@@ -17,34 +18,68 @@ class MainWindow(Gtk.Window):
         self.set_border_width(10)
         self._entry()
         self._initUI()
+        self.array = []
     
     def _initUI(self):
         self.set_size_request(640, 360)
 
     def _entry(self):
         # Set The Box
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1)
 
-        self.add(vbox) # Add The Box to MainWindow
+        self.add(self.vbox) # Add The Box to MainWindow
 
         # Set Username Input
         self.username = Gtk.Entry()
         self.username.set_text("")
-
-        vbox.pack_start(self.username, False, True, 2)
+        self.vbox.pack_start(self.username, False, False, 2)
 
         # Make Password Input
         self.password = Gtk.Entry()
         self.password.set_text("")
         self.password.set_visibility(False)
+        self.vbox.pack_start(self.password, False, False, 2)
 
-        vbox.pack_start(self.password, False, True, 2)
+        # Label
+        self.rangeLabel = Gtk.Label("Range Penilaian. Kalian bisa memilih lebih dari satu dan akan menjadi jawaban dari penilaian di kuisioner")
+        self.vbox.pack_start(self.rangeLabel, False, False, 2)
+
+        # Make CheckBox
+        self.button1 = Gtk.CheckButton(label="1")
+        self.button2 = Gtk.CheckButton(label="2")
+        self.button3 = Gtk.CheckButton(label="3")
+        self.button4 = Gtk.CheckButton(label="4")
+        self.button5 = Gtk.CheckButton(label="5")
+
+        self.button1.connect("toggled", self._toggleButton, "1")
+        self.button2.connect("toggled", self._toggleButton, "2")
+        self.button3.connect("toggled", self._toggleButton, "3")
+        self.button4.connect("toggled", self._toggleButton, "4")
+        self.button5.connect("toggled", self._toggleButton, "5")
+
+        self.vbox.pack_start(self.button1, False, False, 2)
+        self.vbox.pack_start(self.button2, False, False, 2)
+        self.vbox.pack_start(self.button3, False, False, 2)
+        self.vbox.pack_start(self.button4, False, False, 2)
+        self.vbox.pack_start(self.button5, False, False, 2)
 
         # Make Sign In Button
-        self.button = Gtk.Button(label="Sign In")
-        self.button.connect("clicked", self._sign_in)
+        self.signInButton = Gtk.Button(label="Sign In")
+        self.signInButton.connect("clicked", self._sign_in)
 
-        vbox.pack_start(self.button, False, True, 1)
+        self.vbox.pack_end(self.signInButton, False, False, 1)
+
+    def _toggleButton(self, checkButton, value):
+        if checkButton.get_active():
+            self.array.append(value)
+        else:
+            self.array.remove(value)
+        self.array.sort()
+        print("List Jawaban: ", end=' ')
+        for i in self.array:
+            print(i, end=', ')
+        print('\n')
+
 
     def _sign_in(self, widget):
         self.driver = webdriver.Chrome()
@@ -108,6 +143,7 @@ class MainWindow(Gtk.Window):
         kesiapan_mengajar = self.driver.find_element_by_partial_link_text("Kesiapan Mengajar")
         kesiapan_mengajar.click()
         
+
 win = MainWindow()
 win.connect("destroy", Gtk.main_quit)
 win.show_all()
