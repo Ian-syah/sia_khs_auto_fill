@@ -93,8 +93,20 @@ class MainWindow(Gtk.Window):
         print(last.text)
  
         self.action.move_to_element(last).click(last).perform()
-        
 
+        self._kuisioner()
+        
+    def _kuisioner(self):
+        self.action = ActionChains(self.driver)
+
+        allTabs = self.driver.window_handles
+
+        for tab in allTabs:
+            self.driver.switch_to.window(tab)
+            print(self.driver.current_url)
+
+        kesiapan_mengajar = self.driver.find_element_by_partial_link_text("Kesiapan Mengajar")
+        kesiapan_mengajar.click()
         
 win = MainWindow()
 win.connect("destroy", Gtk.main_quit)
