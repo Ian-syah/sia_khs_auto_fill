@@ -11,6 +11,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 
 class MainWindow(Gtk.Window):
+
     def __init__(self):
         Gtk.Window.__init__(self, title="SIA Auto Fill")
         self.set_border_width(10)
@@ -28,13 +29,13 @@ class MainWindow(Gtk.Window):
 
         # Set Username Input
         self.username = Gtk.Entry()
-        self.username.set_text("1915016074")
+        self.username.set_text("")
 
         vbox.pack_start(self.username, False, True, 2)
 
         # Make Password Input
         self.password = Gtk.Entry()
-        self.password.set_text("yoganteng29")
+        self.password.set_text("")
         self.password.set_visibility(False)
 
         vbox.pack_start(self.password, False, True, 2)
@@ -46,7 +47,6 @@ class MainWindow(Gtk.Window):
         vbox.pack_start(self.button, False, True, 1)
 
     def _sign_in(self, widget):
-
         self.driver = webdriver.Chrome()
 
         self.driver.maximize_window()
@@ -82,15 +82,19 @@ class MainWindow(Gtk.Window):
 
         self._khs_pages()
 
+
     def _khs_pages(self):
         self.action = ActionChains(self.driver)
 
         pilih_bar = self.driver.execute_script(open("./js/khs_page.js").read())
 
         last = self.driver.find_element_by_partial_link_text("Kuisioner")
+
+        print(last.text)
  
         self.action.move_to_element(last).click(last).perform()
         
+
         
 win = MainWindow()
 win.connect("destroy", Gtk.main_quit)
