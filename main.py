@@ -9,7 +9,6 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 
-
 class MainWindow(Gtk.Window):
 
     def __init__(self):
@@ -203,10 +202,8 @@ class MainWindow(Gtk.Window):
             elem = "document.querySelector(\"tr input[name='"+name+"'][value='"+value+"']\").checked = true;"
             self.driver.execute_script(elem)
 
-        
 
 win = MainWindow()
 win.connect("destroy", Gtk.main_quit)
 win.show_all()
 Gtk.main()
-
