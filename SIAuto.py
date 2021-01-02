@@ -16,6 +16,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import random
+import datetime
 
 
 class Ui_MainWindow(object):
@@ -28,6 +29,10 @@ class Ui_MainWindow(object):
 
         self.array = []
 
+        self.tahunAjaran = QtWidgets.QLabel(self.centralwidget)
+        self.tahunAjaran.setGeometry(QtCore.QRect(330, 10, 160, 17))
+        self.tahunAjaran.setObjectName("tahunAjaran")
+
         self.penilaianLabel = QtWidgets.QLabel(self.centralwidget)
         self.penilaianLabel.setGeometry(QtCore.QRect(270, 140, 151, 17))
         self.penilaianLabel.setObjectName("penilaianLabel")
@@ -39,6 +44,7 @@ class Ui_MainWindow(object):
 
         MainWindow.setStatusBar(self.statusbar)
 
+        self._date()
         self.entry()
         self.checkBoxes()
         self.buttons()
@@ -47,6 +53,37 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def _date(self):
+        x = datetime.datetime.now()
+
+        curr_month = x.month
+        self.curr_year  = x.year
+
+        sem_ganjil = [7, 8, 9, 10, 11, 12]
+        sem_genap  = [1, 2, 3,  4,  5,  6]
+
+        for i in sem_ganjil:
+            if i == curr_month:
+                isGanjil = True
+                break
+            else:
+                isGanjil = False
+
+        for i in sem_genap:
+            if i == curr_month:
+                isGenap = True
+                break
+            else:
+                isGenap = False
+
+        if isGanjil == True:
+            print("Tahun Ajaran %i/%i Semester 1" %(self.curr_year, self.curr_year+1))
+        elif isGenap == True:
+            print("Tahun Ajaran %i/%i Semester 2" %(self.curr_year-1, self.curr_year))
+            self.curr_year -= 1
+
+
 
 
     # GUI Part
@@ -142,6 +179,8 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
     def retranslateUi(self, MainWindow):
+        print(self.curr_year)
+        year = "Tahun ajaran " + str(self.curr_year) + "/" + str(self.curr_year+1)
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "SIA Auto Fill Kuesioner"))
         self.checkBox1.setText(_translate("MainWindow", "1"))
@@ -153,6 +192,7 @@ class Ui_MainWindow(object):
         self.checkBox5.setText(_translate("MainWindow", "5"))
         self.signInButton.setText(_translate("MainWindow", "Sign In"))
         self.penilaianLabel.setText(_translate("MainWindow", "Penilaian Kuisioner"))
+        self.tahunAjaran.setText(_translate("MainWindow", year))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionPenilaian.setText(_translate("MainWindow", "Penilaian"))
         self.actionPenilaian.setShortcut(_translate("MainWindow", "Ctrl+H"))
@@ -221,7 +261,7 @@ class Ui_MainWindow(object):
         while (True):
             self.action = ActionChains(self.driver)
 
-            pilih_bar = self.driver.execute_script(open("./js/khs_page.js").read())
+            pilih_bar = self.driver.execute_script(open("./js/khs_page_genap.js").read())
             
             try:
                 last = self.driver.find_element_by_partial_link_text("Kuisioner")

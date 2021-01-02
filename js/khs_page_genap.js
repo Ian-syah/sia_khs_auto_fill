@@ -1,8 +1,15 @@
 // var sem = $('#semester');
+var today = new Date();
+
+var year = today.getFullYear() - 1;
+
+curr_year = year.toString();
+
+curr_year += "2"
+
 var tampil = $('#tampil');
 
-
-var semId = "20201";
+var semId = curr_year;
 console.log(semId)
 
 
