@@ -3,7 +3,7 @@ var today = new Date();
 
 var year = today.getFullYear() - 1;
 
-curr_year = year.toString();
+var curr_year = year.toString();
 
 curr_year += "2"
 
@@ -12,6 +12,7 @@ var tampil = $('#tampil');
 var semId = curr_year;
 console.log(semId)
 
+document.querySelector("#select2-semester-container").textContent = "Hahahha"
 
 $.ajax({
     type:'post',
@@ -23,5 +24,3 @@ $.ajax({
          
     }
 });
-
-document.querySelector("#select2-semester-container").textContent = "Hahahha"

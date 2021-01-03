@@ -57,21 +57,21 @@ class Ui_MainWindow(object):
     def _date(self):
         x = datetime.datetime.now()
 
-        curr_month = x.month
+        self.curr_month = x.month
         self.curr_year  = x.year
 
         sem_ganjil = [7, 8, 9, 10, 11, 12]
         sem_genap  = [1, 2, 3,  4,  5,  6]
 
         for i in sem_ganjil:
-            if i == curr_month:
+            if i == self.curr_month:
                 isGanjil = True
                 break
             else:
                 isGanjil = False
 
         for i in sem_genap:
-            if i == curr_month:
+            if i == self.curr_month:
                 isGenap = True
                 break
             else:
@@ -79,8 +79,10 @@ class Ui_MainWindow(object):
 
         if isGanjil == True:
             print("Tahun Ajaran %i/%i Semester 1" %(self.curr_year, self.curr_year+1))
+            self.semester = "ganjil"
         elif isGenap == True:
             print("Tahun Ajaran %i/%i Semester 2" %(self.curr_year-1, self.curr_year))
+            self.semester = "genap"
             self.curr_year -= 1
 
 
@@ -146,6 +148,7 @@ class Ui_MainWindow(object):
         self.checkBox5.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.checkBox5.setObjectName("checkBox5")
         self.checkBox5.stateChanged.connect(lambda: self._toggleButton(self.checkBox5, "5"))
+        
 
     def buttons(self):
         # Sign In Button
@@ -183,18 +186,25 @@ class Ui_MainWindow(object):
         year = "Tahun ajaran " + str(self.curr_year) + "/" + str(self.curr_year+1)
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "SIA Auto Fill Kuesioner"))
-        self.checkBox1.setText(_translate("MainWindow", "1"))
-        self.checkBox2.setText(_translate("MainWindow", "2"))
+
         self.usernameForm.setPlaceholderText(_translate("MainWindow", "Username"))
         self.passwordForm.setPlaceholderText(_translate("MainWindow", "Password"))
+
+        self.checkBox1.setText(_translate("MainWindow", "1"))
+        self.checkBox2.setText(_translate("MainWindow", "2"))
         self.checkBox3.setText(_translate("MainWindow", "3"))
         self.checkBox4.setText(_translate("MainWindow", "4"))
         self.checkBox5.setText(_translate("MainWindow", "5"))
+
         self.signInButton.setText(_translate("MainWindow", "Sign In"))
+
         self.penilaianLabel.setText(_translate("MainWindow", "Penilaian Kuisioner"))
         self.tahunAjaran.setText(_translate("MainWindow", year))
+
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
+
         self.actionPenilaian.setText(_translate("MainWindow", "Penilaian"))
+
         self.actionPenilaian.setShortcut(_translate("MainWindow", "Ctrl+H"))
 
 
@@ -212,10 +222,13 @@ class Ui_MainWindow(object):
 
 
     def _sign_in(self, widget):
+        print("=> Membuka Driver")
+
         try:
             self.driver = webdriver.Chrome("web_driver/chromedriver")
         except:
             self.driver = webdriver.Firefox()
+
 
         self.driver.maximize_window()
         self.driver.get("https://sia.unmul.ac.id/home")
@@ -260,9 +273,19 @@ class Ui_MainWindow(object):
         
         while (True):
             self.action = ActionChains(self.driver)
-
-            pilih_bar = self.driver.execute_script(open("./js/khs_page_genap.js").read())
             
+
+            if self.curr_month == 1:
+                self.driver.execute_script(open("./js/khs_page_jan.js").read())
+
+            elif self.semester == "ganjil":
+                self.driver.execute_script(open("./js/khs_page_ganjil.js").read())
+
+            else:
+                self.driver.execute_script(open("./js/khs_page_genap.js").read())
+
+
+
             try:
                 last = self.driver.find_element_by_partial_link_text("Kuisioner")
                 print(last.text)

@@ -20,6 +20,7 @@ var semId = curr_year;
 console.log(semId)
 
 
+
 $.ajax({
     type:'post',
     url:'/pmhskhs/loaddatas',
@@ -30,5 +31,3 @@ $.ajax({
          
     }
 });
-
-document.querySelector("#select2-semester-container").textContent = "Hahahha"
