@@ -18,7 +18,7 @@ import time
 import random
 import datetime
 
-
+print(QtCore)
 class Ui_MainWindow(object):
 
     def __init__(self, MainWindow):
