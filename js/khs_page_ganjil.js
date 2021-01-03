@@ -1,10 +1,17 @@
 // var sem = $('#semester');
+
 var today = new Date();
 
+// Get Current Month
+var curr_month = today.getMonth()
+
+// Get Current Year
 var year = today.getFullYear();
 
-curr_year = year.toString();
+// Convert year from number to string
+var curr_year = year.toString();
 
+// Append 1 to the year which mean Semester Ganjil
 curr_year += "1"
 
 var tampil = $('#tampil');
@@ -23,3 +30,5 @@ $.ajax({
          
     }
 });
+
+document.querySelector("#select2-semester-container").textContent = "Hahahha"

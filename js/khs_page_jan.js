@@ -1,11 +1,10 @@
-// var sem = $('#semester');
 var today = new Date();
 
 var year = today.getFullYear() - 1;
 
 curr_year = year.toString();
 
-curr_year += "2"
+curr_year += "1"
 
 var tampil = $('#tampil');
 
@@ -23,5 +22,3 @@ $.ajax({
          
     }
 });
-
-document.querySelector("#select2-semester-container").textContent = "Hahahha"
