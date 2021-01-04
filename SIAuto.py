@@ -17,8 +17,9 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 import random
 import datetime
+import platform
 
-print(QtCore)
+
 class Ui_MainWindow(object):
 
     def __init__(self, MainWindow):
@@ -84,9 +85,6 @@ class Ui_MainWindow(object):
             print("Tahun Ajaran %i/%i Semester 2" %(self.curr_year-1, self.curr_year))
             self.semester = "genap"
             self.curr_year -= 1
-
-
-
 
     # GUI Part
     def entry(self):
@@ -224,18 +222,20 @@ class Ui_MainWindow(object):
     def _sign_in(self, widget):
         print("=> Membuka Driver")
 
-        try:
+        os = platform.system()
+
+        if os == 'Linux':
             self.driver = webdriver.Chrome("web_driver/chromedriver")
-        except:
-            self.driver = webdriver.Firefox()
+        elif os == 'Windows':
+            self.driver = webdriver.Chrome("web_driver/chromedriver.exe")
 
 
         self.driver.maximize_window()
         self.driver.get("https://sia.unmul.ac.id/home")
         self.driver.implicitly_wait(30)
 
-        print(self.usernameForm.text())
-        print(self.passwordForm.text())
+        # print(self.usernameForm.text())
+        # print(self.passwordForm.text())
 
         username_form = self.driver.find_element_by_id("exampleInputEmail")
         username_form.send_keys(self.usernameForm.text())
@@ -271,7 +271,7 @@ class Ui_MainWindow(object):
 
         run = True
         
-        while (True):
+        while (run == True):
             self.action = ActionChains(self.driver)
             
 
@@ -309,6 +309,7 @@ class Ui_MainWindow(object):
                 # time.sleep(30)
 
             except NoSuchElementException as exception:
+                print(exception)
                 print("Tidak ada lagi kuisioner, menutup browser")
                 run = False
                 self.driver.quit()
