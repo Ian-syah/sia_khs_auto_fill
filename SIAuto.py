@@ -30,14 +30,6 @@ class Ui_MainWindow(object):
 
         self.array = []
 
-        self.tahunAjaran = QtWidgets.QLabel(self.centralwidget)
-        self.tahunAjaran.setGeometry(QtCore.QRect(330, 10, 160, 17))
-        self.tahunAjaran.setObjectName("tahunAjaran")
-
-        self.penilaianLabel = QtWidgets.QLabel(self.centralwidget)
-        self.penilaianLabel.setGeometry(QtCore.QRect(270, 140, 151, 17))
-        self.penilaianLabel.setObjectName("penilaianLabel")
-
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -46,8 +38,10 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self._date()
+        self.labels()
         self.entry()
         self.checkBoxes()
+        self.radioButton()
         self.buttons()
         self.menuBar(MainWindow)
 
@@ -87,6 +81,20 @@ class Ui_MainWindow(object):
             self.curr_year -= 1
 
     # GUI Part
+
+    def labels(self):
+        self.tahunAjaran = QtWidgets.QLabel(self.centralwidget)
+        self.tahunAjaran.setGeometry(QtCore.QRect(330, 10, 160, 17))
+        self.tahunAjaran.setObjectName("tahunAjaran")
+
+        self.penilaianLabel = QtWidgets.QLabel(self.centralwidget)
+        self.penilaianLabel.setGeometry(QtCore.QRect(270, 140, 151, 17))
+        self.penilaianLabel.setObjectName("penilaianLabel")
+
+        self.semesterLabel = QtWidgets.QLabel(self.centralwidget)
+        self.semesterLabel.setGeometry(QtCore.QRect(270, 210, 151, 17))
+        self.semesterLabel.setObjectName("penilaianLabel")
+
     def entry(self):
         # Username
         self.usernameForm = QtWidgets.QLineEdit(self.centralwidget)
@@ -148,11 +156,22 @@ class Ui_MainWindow(object):
         self.checkBox5.stateChanged.connect(lambda: self._toggleButton(self.checkBox5, "5"))
         
 
+    def radioButton(self):
+        self.radioButton1 = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton1.setGeometry(QtCore.QRect(270, 230, 151, 17))
+        self.radioButton1.setObjectName("radioButton1")
+        self.radioButton1.toggled.connect(lambda : self._toggleRadioButton(self.radioButton1, "Ganjil"))
+
+        self.radioButton2 = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton2.setGeometry(QtCore.QRect(350, 230, 151, 17))
+        self.radioButton2.setObjectName("radioButton2")
+        self.radioButton2.toggled.connect(lambda : self._toggleRadioButton(self.radioButton2, "Genap"))
+
     def buttons(self):
         # Sign In Button
         self.signInButton = QtWidgets.QPushButton(self.centralwidget)
         self.signInButton.setEnabled(True)
-        self.signInButton.setGeometry(QtCore.QRect(270, 210, 271, 25))
+        self.signInButton.setGeometry(QtCore.QRect(270, 280, 271, 25))
         self.signInButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.signInButton.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.signInButton.setLayoutDirection(QtCore.Qt.LeftToRight)
@@ -185,8 +204,12 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "SIA Auto Fill Kuesioner"))
 
+        self.tahunAjaran.setText(_translate("MainWindow", year))
+
         self.usernameForm.setPlaceholderText(_translate("MainWindow", "Username"))
         self.passwordForm.setPlaceholderText(_translate("MainWindow", "Password"))
+
+        self.penilaianLabel.setText(_translate("MainWindow", "Penilaian Kuisioner"))
 
         self.checkBox1.setText(_translate("MainWindow", "1"))
         self.checkBox2.setText(_translate("MainWindow", "2"))
@@ -194,10 +217,13 @@ class Ui_MainWindow(object):
         self.checkBox4.setText(_translate("MainWindow", "4"))
         self.checkBox5.setText(_translate("MainWindow", "5"))
 
+        self.semesterLabel.setText(_translate("MainWindow", "Semester"))
+
+        self.radioButton1.setText(_translate("MainWindow", "Ganjil"))
+        self.radioButton2.setText(_translate("MainWindow", "Genap"))
+
         self.signInButton.setText(_translate("MainWindow", "Sign In"))
 
-        self.penilaianLabel.setText(_translate("MainWindow", "Penilaian Kuisioner"))
-        self.tahunAjaran.setText(_translate("MainWindow", year))
 
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
 
@@ -218,6 +244,10 @@ class Ui_MainWindow(object):
             print(i, end=', ')
         print('\n')
 
+
+    def _toggleRadioButton(self, radioButton, value):
+        pass
+        
 
     def _sign_in(self, widget):
         print("=> Membuka Driver")
@@ -285,7 +315,6 @@ class Ui_MainWindow(object):
                 self.driver.execute_script(open("./js/khs_page_genap.js").read())
 
 
-
             try:
                 last = self.driver.find_element_by_partial_link_text("Kuisioner")
                 print(last.text)
@@ -300,7 +329,6 @@ class Ui_MainWindow(object):
 
                 # Menutup Window Baru
                 self.driver.execute_script("window.close();")
-
 
                 # Handling Current Tab with webdriver
                 self._changeTab()
