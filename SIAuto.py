@@ -37,11 +37,11 @@ class Ui_MainWindow(object):
 
         MainWindow.setStatusBar(self.statusbar)
 
-        self._date()
         self.labels()
         self.entry()
         self.checkBoxes()
         self.radioButton()
+        self._date()
         self.buttons()
         self.menuBar(MainWindow)
 
@@ -72,13 +72,17 @@ class Ui_MainWindow(object):
             else:
                 isGenap = False
 
-        if isGanjil == True:
+        if self.curr_month == 1:
+            self.radioButton1.setChecked(True)
+        elif isGanjil == True:
             print("Tahun Ajaran %i/%i Semester 1" %(self.curr_year, self.curr_year+1))
             self.semester = "ganjil"
+            self.radioButton1.setChecked(True)
         elif isGenap == True:
             print("Tahun Ajaran %i/%i Semester 2" %(self.curr_year-1, self.curr_year))
             self.semester = "genap"
             self.curr_year -= 1
+            self.radioButton2.setChecked(True)
 
     # GUI Part
 
@@ -199,7 +203,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
     def retranslateUi(self, MainWindow):
-        print(self.curr_year)
         year = "Tahun ajaran " + str(self.curr_year) + "/" + str(self.curr_year+1)
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "SIA Auto Fill Kuesioner"))
@@ -305,14 +308,13 @@ class Ui_MainWindow(object):
             self.action = ActionChains(self.driver)
             
 
-            if self.curr_month == 1:
+            if (self.radioButton1.isChecked() != False) and (self.curr_month < 7):
                 self.driver.execute_script(open("./js/khs_page_jan.js").read())
 
-            elif self.semester == "ganjil":
-                self.driver.execute_script(open("./js/khs_page_ganjil.js").read())
-
-            else:
+            elif (self.radioButton2.isChecked() != False) and (self.curr_month < 7):
                 self.driver.execute_script(open("./js/khs_page_genap.js").read())
+            else:
+                self.driver.execute_script(open("./js/khs_page_ganjil.js").read())
 
 
             try:
