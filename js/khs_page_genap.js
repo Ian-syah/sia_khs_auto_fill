@@ -12,7 +12,7 @@ var tampil = $('#tampil');
 var semId = curr_year;
 console.log(semId)
 
-document.querySelector("#select2-semester-container").textContent = "Hahahha"
+document.querySelector("#select2-semester-container").textContent = year.toString() + " Genap"
 
 $.ajax({
     type:'post',

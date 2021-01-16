@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="logoUnmul">
+    <file>../assets/logoUnmul.png</file>
+  </qresource>
+</RCC>

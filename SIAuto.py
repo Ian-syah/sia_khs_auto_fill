@@ -9,6 +9,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
+from Penilaian import Ui_Dialog
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -19,12 +20,12 @@ import random
 import datetime
 import platform
 
-
 class Ui_MainWindow(object):
 
     def __init__(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.setFixedSize(800, 600)
+        # MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
@@ -74,6 +75,7 @@ class Ui_MainWindow(object):
 
         if self.curr_month == 1:
             self.radioButton1.setChecked(True)
+            self.curr_year += -1
         elif isGanjil == True:
             print("Tahun Ajaran %i/%i Semester 1" %(self.curr_year, self.curr_year+1))
             self.semester = "ganjil"
@@ -191,21 +193,29 @@ class Ui_MainWindow(object):
         self.menubar.setObjectName("menubar")
 
         MainWindow.setMenuBar(self.menubar)
-
+ 
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
 
         self.actionPenilaian = QtWidgets.QAction(MainWindow)
         self.actionPenilaian.setShortcutContext(QtCore.Qt.WidgetShortcut)
         self.actionPenilaian.setObjectName("actionPenilaian")
+        self.actionPenilaian.triggered.connect(self.helpWindow)
 
         self.menuHelp.addAction(self.actionPenilaian)
         self.menubar.addAction(self.menuHelp.menuAction())
 
+    def helpWindow(self):
+        print("Hahah")
+        # app = QtWidgets.QApplication(sys.argv)
+        self.ui = Ui_Dialog()
+        self.ui.Dialog.show()
+        # sys.exit(app.exec_())
+      
     def retranslateUi(self, MainWindow):
         year = "Tahun ajaran " + str(self.curr_year) + "/" + str(self.curr_year+1)
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "SIA Auto Fill Kuesioner"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "SIAuto Fill Kuesioner"))
 
         self.tahunAjaran.setText(_translate("MainWindow", year))
 
@@ -226,7 +236,6 @@ class Ui_MainWindow(object):
         self.radioButton2.setText(_translate("MainWindow", "Genap"))
 
         self.signInButton.setText(_translate("MainWindow", "Sign In"))
-
 
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
 
