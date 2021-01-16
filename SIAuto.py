@@ -9,7 +9,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
-from Penilaian import Ui_Dialog
+from lib.Penilaian import Ui_Dialog
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -25,11 +25,16 @@ class Ui_MainWindow(object):
     def __init__(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setFixedSize(800, 600)
-        # MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
         self.array = []
+
+        self.qr = self.centralwidget.frameGeometry()
+        self.centerpoint = QtWidgets.QDesktopWidget().availableGeometry().center()
+        self.qr.moveCenter(self.centerpoint)
+        self.centralwidget.move(self.qr.topLeft())
+
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -86,7 +91,9 @@ class Ui_MainWindow(object):
             self.curr_year -= 1
             self.radioButton2.setChecked(True)
 
-    # GUI Part
+    """
+    GUI PART
+    """
 
     def labels(self):
         self.tahunAjaran = QtWidgets.QLabel(self.centralwidget)
@@ -122,8 +129,6 @@ class Ui_MainWindow(object):
         self.passwordForm.setEchoMode(QtWidgets.QLineEdit.Password)
         self.passwordForm.setObjectName("passwordForm")
         self.passwordForm.setText("")
-
-        # print(self.passwordForm.text)
 
     def checkBoxes(self):
         # CheckBox 1
@@ -166,12 +171,12 @@ class Ui_MainWindow(object):
         self.radioButton1 = QtWidgets.QRadioButton(self.centralwidget)
         self.radioButton1.setGeometry(QtCore.QRect(270, 230, 151, 17))
         self.radioButton1.setObjectName("radioButton1")
-        self.radioButton1.toggled.connect(lambda : self._toggleRadioButton(self.radioButton1, "Ganjil"))
+        # self.radioButton1.toggled.connect(lambda : self._toggleRadioButton(self.radioButton1, "Ganjil"))
 
         self.radioButton2 = QtWidgets.QRadioButton(self.centralwidget)
         self.radioButton2.setGeometry(QtCore.QRect(350, 230, 151, 17))
         self.radioButton2.setObjectName("radioButton2")
-        self.radioButton2.toggled.connect(lambda : self._toggleRadioButton(self.radioButton2, "Genap"))
+        # self.radioButton2.toggled.connect(lambda : self._toggleRadioButton(self.radioButton2, "Genap"))
 
     def buttons(self):
         # Sign In Button
@@ -206,11 +211,8 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
     def helpWindow(self):
-        print("Hahah")
-        # app = QtWidgets.QApplication(sys.argv)
         self.ui = Ui_Dialog()
         self.ui.Dialog.show()
-        # sys.exit(app.exec_())
       
     def retranslateUi(self, MainWindow):
         year = "Tahun ajaran " + str(self.curr_year) + "/" + str(self.curr_year+1)
@@ -244,7 +246,9 @@ class Ui_MainWindow(object):
         self.actionPenilaian.setShortcut(_translate("MainWindow", "Ctrl+H"))
 
 
-    # Driver Part
+    """
+    DRIVER PART
+    """
     def _toggleButton(self, checkButton, value):
         if checkButton.isChecked() == True:
             self.array.append(value)
@@ -255,10 +259,6 @@ class Ui_MainWindow(object):
         for i in self.array:
             print(i, end=', ')
         print('\n')
-
-
-    def _toggleRadioButton(self, radioButton, value):
-        pass
         
 
     def _sign_in(self, widget):
@@ -266,10 +266,13 @@ class Ui_MainWindow(object):
 
         os = platform.system()
 
-        if os == 'Linux':
-            self.driver = webdriver.Chrome("web_driver/chromedriver")
-        elif os == 'Windows':
-            self.driver = webdriver.Chrome("web_driver/chromedriver.exe")
+        try:
+            if os == 'Linux':
+                self.driver = webdriver.Chrome("web_driver/chromedriver")
+            elif os == 'Windows':
+                self.driver = webdriver.Chrome("web_driver/chromedriver.exe")
+        except:
+            pass
 
 
         self.driver.maximize_window()
@@ -376,6 +379,7 @@ class Ui_MainWindow(object):
         elem = "document.querySelector(\""+link+"\").click();"
         self.driver.execute_script(elem)
 
+        # Mengisi saran dengan text kosong
         elemText = "document.querySelector('textarea').value = ' ';"
         self.driver.execute_script(elemText)
 
@@ -397,8 +401,9 @@ class Ui_MainWindow(object):
             elem = "document.querySelector(\"tr input[name='"+name+"'][value='"+value+"']\").checked = true;"
             self.driver.execute_script(elem)
 
-app = QtWidgets.QApplication(sys.argv)
-MainWindow = QtWidgets.QMainWindow()
-ui = Ui_MainWindow(MainWindow)
-MainWindow.show()
-sys.exit(app.exec_())
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
