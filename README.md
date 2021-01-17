@@ -18,5 +18,7 @@ pip install selenium PyQt5
 + Make sure to download chromedriver same as the version of the Google Chrome Browser.
 + If your ``Google Chrome version is 88.0.4324.27``, then download the ``ChromeDriver 88.0.4324.27``
 
+:smile:
+
 
 
